@@ -1,5 +1,8 @@
-# PetCare
+# Pet Care
 
-## Articles
+## Para rodar o backend:
 
-<https://docs.flutter.dev/get-started/fundamentals/widgets>
+```bash
+cd backend
+node index.js
+```
