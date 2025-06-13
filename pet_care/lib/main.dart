@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'widgets/login_form.dart';
+import 'widgets/register_form.dart';
+import 'pages/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,6 +20,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellow),
       ),
+      routes: {
+        '/home': (context) => const HomePage(),
+      },
       home: const LoginPage(),
     );
   }
@@ -34,15 +40,18 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  bool _showRegisterForm = false;
 
   @override
   void initState() {
     super.initState();
     _emailController.addListener(() {
-      debugPrint('Current email: ${_emailController.text}');
+      debugPrint('Current emailss: ${_emailController.text}');
     });
     _passwordController.addListener(() {
-      debugPrint('Current password: ${_passwordController.text}');
+      debugPrint('Current passwordss: ${_passwordController.text}');
     });
   }
 
@@ -50,18 +59,33 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _submitForm() async {
-    // final email = _emailController.text;
-    // final password = _passwordController.text;
+  void _changeToRegister() {
+    setState(() {
+      _showRegisterForm = !_showRegisterForm;
+    });
+    _emailController.clear();
+    _passwordController.clear();
+  }
+
+  void _submitRegister() async {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+    final confirmPassword = _confirmPasswordController.text;
+    
+    if (password != confirmPassword) {
+      debugPrint('Passwords do not match');
+      return;
+    }
     
     final response = await http.post(
       Uri.parse('http://localhost:3000/register'),
       body: jsonEncode({
-        'email': _emailController.text,
-        'password': _passwordController.text,
+        'email': email,
+        'password': password,
       }),
       headers: {'Content-Type': 'application/json'}, // importante para API REST
     );
@@ -77,43 +101,65 @@ class _LoginPageState extends State<LoginPage> {
       debugPrint('Erro na requisição: ${response.statusCode}');
       debugPrint('Corpo da resposta: ${response.body}');
     }
+
+    setState(() {
+      _showRegisterForm = false;
+      _emailController.clear();
+      _passwordController.clear();
+      _confirmPasswordController.clear();
+    });
+  }
+
+  void _submitLogin() async {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/login'),
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+      }),
+      headers: {'Content-Type': 'application/json'}, // importante para API REST
+    );
+
+    if (response.statusCode == 200) {
+      try {
+        final data = jsonDecode(response.body);
+        debugPrint('Response data: $data');
+        Navigator.of(context).pushReplacementNamed('/home');
+      } catch (e) {
+        debugPrint('Erro ao decodificar JSON: $e');
+      }
+    } else {
+      debugPrint('Erro na requisição: ${response.statusCode}');
+      debugPrint('Corpo da resposta: ${response.body}');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Login"),
-      ),
+      appBar: AppBar(title: Text("Login")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          children: [Form(
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'email',
-                    hintText: 'Enter your username',
-                  ),
-                ),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(
-                    labelText: 'password',
-                    hintText: 'Enter your username',
-                  ),
-                  obscureText: true,
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: _submitForm,
-                  child: const Text('Submit'),
-                ),
-              ],
-            )
-          )]
+          children: [
+            if (_showRegisterForm)
+              RegisterForm(
+                emailController: _emailController,
+                passwordController: _passwordController,
+                confirmPasswordController: _confirmPasswordController,
+                onSubmit: _submitRegister,
+              )
+            else
+              LoginForm(
+                emailController: _emailController,
+                passwordController: _passwordController,
+                onSubmit: _submitLogin,
+                changeToRegister: _changeToRegister,
+              ),
+          ],
         ),
       ),
     );
