@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'app_button.dart';
+import 'app_text_field.dart';
 
 class RegisterForm extends StatelessWidget {
   final TextEditingController emailController;
@@ -21,41 +23,30 @@ class RegisterForm extends StatelessWidget {
     return Form(
       child: Column(
         children: [
-          TextFormField(
+          AppTextField(
             controller: emailController,
-            decoration: const InputDecoration(
-              labelText: 'email',
-              hintText: 'Enter your username',
-            ),
+            label: 'email',
+            hint: 'Enter your username',
           ),
-          TextFormField(
+          AppTextField(
             controller: passwordController,
-            decoration: const InputDecoration(
-              labelText: 'password',
-              hintText: 'Enter your password',
-            ),
+            label: 'password',
+            hint: 'Enter your password',
             obscureText: true,
           ),
-          TextFormField(
+          AppTextField(
             controller: confirmPasswordController,
-            decoration: const InputDecoration(
-              labelText: 'confirm password',
-              hintText: 'confirm your password',
-            ),
+            label: 'confirm password',
+            hint: 'confirm your password',
             obscureText: true,
           ),
-          TextFormField(
+          AppTextField(
             controller: nameController,
-            decoration: const InputDecoration(
-              labelText: 'name',
-              hintText: 'Enter your name',
-            ),
+            label: 'name',
+            hint: 'Enter your name',
           ),
           const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: onSubmit,
-            child: const Text('Register'),
-          ),
+          AppButton(label: 'Register', onPressed: onSubmit),
         ],
       ),
     );

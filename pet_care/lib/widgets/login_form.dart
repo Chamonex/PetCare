@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'app_button.dart';
+import 'app_text_field.dart';
 
 class LoginForm extends StatelessWidget {
   final TextEditingController emailController;
@@ -19,26 +21,21 @@ class LoginForm extends StatelessWidget {
     return Form(
       child: Column(
         children: [
-          TextFormField(
+          AppTextField(
             controller: emailController,
-            decoration: const InputDecoration(
-              labelText: 'email',
-              hintText: 'Enter your username',
-            ),
+            label: 'email',
+            hint: 'Enter your username',
           ),
-          TextFormField(
+          AppTextField(
             controller: passwordController,
-            decoration: const InputDecoration(
-              labelText: 'password',
-              hintText: 'Enter your password',
-            ),
+            label: 'password',
+            hint: 'Enter your password',
             obscureText: true,
           ),
           const SizedBox(height: 24),
-          ElevatedButton(onPressed: onSubmit, child: const Text('Login')),
+          AppButton(label: 'Login', onPressed: onSubmit),
           const SizedBox(height: 24),
-          ElevatedButton(onPressed: changeToRegister, child: const Text('Register')),
-        
+          AppButton(label: 'Register', onPressed: changeToRegister),
         ],
       ),
     );

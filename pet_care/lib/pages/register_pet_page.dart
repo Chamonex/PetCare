@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/home_button.dart';
+import '../widgets/app_button.dart';
 import '../utils/app_utils.dart';
 
 class RegisterPetPage extends StatefulWidget {
@@ -52,9 +52,14 @@ Future<void> _selectTime(BuildContext context) async {
                   ),
                 ),
                 const SizedBox(height: 24),
-                HomeButton(
-                  icon: const Icon(Icons.home),
+                AppButton(
+                  label: 'Home',
+                  icon: Icons.home,
                   onPressed: () => changePage(context, 'register_pet'),
+                  filled: false,
+                  color: Colors.blue,
+                  width: 120,
+                  height: 48,
                 ),
               ],
             ),
