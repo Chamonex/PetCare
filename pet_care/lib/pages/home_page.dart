@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/user_provider.dart';
 import '../widgets/home_button.dart';
+import '../utils/app_utils.dart';
 
 class HomePage extends StatefulWidget {
   
@@ -13,10 +14,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  void _openPage(String page) {
-    debugPrint('Opening page: $page');
-    Navigator.of(context).pushNamed(page);
+  @override
+  void initState() {
+    super.initState();
+    debugPrint('HomePage initialized');
   }
 
   @override
@@ -27,7 +28,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           debugPrint('FloatingActionButton pressed');    
           userProvider.clearUser();
-          Navigator.of(context).pushReplacementNamed('/login');
+          changePage(context, 'login');
         },
         child: const Icon(Icons.exit_to_app),
       ),
@@ -36,9 +37,18 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Center(child: Column(
         children: [
-          HomeButton(icon: Icons.home, text: 'Home', onPressed: () => _openPage('/home')),
-          HomeButton(icon: Icons.person, text: 'Login', onPressed: () => _openPage('/login')),
-          HomeButton(icon: Icons.home, text: 'Home', onPressed: () => _openPage('/home')),
+          HomeButton(
+            icon: const Icon(Icons.home),
+            onPressed: () => changePage(context, 'register_pet'),
+          ),
+          HomeButton(
+            icon: const Icon(Icons.home),
+            onPressed: () => changePage(context, 'register_pet'),
+          ),
+          HomeButton(
+            icon: const Icon(Icons.home),
+            onPressed: () => changePage(context, 'register_pet'),
+          ),
         ],
       )),
     );

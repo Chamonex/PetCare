@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'pages/home_page.dart';
 import 'pages/login_page.dart';
+import 'pages/register_pet_page.dart';
 import 'providers/user_provider.dart';
 
 
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
         ),
         routes: {
           '/home': (context) => HomePage(),
-          '/login': (context) => LoginPage()
+          '/login': (context) => LoginPage(),
+          '/register_pet': (context) => RegisterPetPage(),
         },
         home: const LoginPage(),
       ),
