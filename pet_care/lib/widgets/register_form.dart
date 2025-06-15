@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_button.dart';
 import 'app_text_field.dart';
+import '../utils/app_utils.dart';
 
 class RegisterForm extends StatelessWidget {
   final TextEditingController emailController;
@@ -8,6 +9,7 @@ class RegisterForm extends StatelessWidget {
   final TextEditingController confirmPasswordController;
   final TextEditingController nameController;
   final VoidCallback onSubmit;
+  final VoidCallback onBackToLogin;
 
   const RegisterForm({
     super.key,
@@ -16,6 +18,7 @@ class RegisterForm extends StatelessWidget {
     required this.confirmPasswordController,
     required this.nameController,
     required this.onSubmit,
+    required this.onBackToLogin,
   });
 
   @override
@@ -47,6 +50,16 @@ class RegisterForm extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           AppButton(label: 'Register', onPressed: onSubmit),
+          const SizedBox(height: 48),
+          AppButton(
+            label: 'Voltar',
+            icon: Icons.login,
+            onPressed: onBackToLogin,
+            filled: false,
+            color: Colors.red,
+            width: 120,
+            height: 48,
+          ),
         ],
       ),
     );

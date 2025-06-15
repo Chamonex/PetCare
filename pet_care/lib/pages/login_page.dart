@@ -38,7 +38,9 @@ class _LoginPageState extends State<LoginPage> {
       debugPrint('Current passwords: ${_passwordController.text}');
     });
     _confirmPasswordController.addListener(() {
-      debugPrint('Current confirm passwords: ${_confirmPasswordController.text}');
+      debugPrint(
+        'Current confirm passwords: ${_confirmPasswordController.text}',
+      );
     });
     _nameController.addListener(() {
       debugPrint('Current name: ${_nameController.text}');
@@ -55,16 +57,26 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _changeToRegister() {
-    // efetuei o login e quero mudar para o formulário de registro
-    if (_showRegisterForm) {
-      debugPrint("DEV: Usuário clicou para registrar mas ja estava na página de registro");
-    }
-    
+
     setState(() {
       _showRegisterForm = true;
+      _hasError = false;
+      _errorMessage = '';
     });
     _emailController.clear();
     _passwordController.clear();
+    _nameController.clear();
+  }
+
+  void _changeToLogin() {
+    setState(() {
+      _showRegisterForm = false;
+      _hasError = false;
+      _errorMessage = '';
+    });
+    _emailController.clear();
+    _passwordController.clear();
+    _confirmPasswordController.clear();
     _nameController.clear();
   }
 
@@ -96,11 +108,7 @@ class _LoginPageState extends State<LoginPage> {
     }
     final response = await http.post(
       Uri.parse('http://localhost:3000/register'),
-      body: jsonEncode({
-        'email': email,
-        'password': password,
-        'name': name,
-      }),
+      body: jsonEncode({'email': email, 'password': password, 'name': name}),
       headers: {'Content-Type': 'application/json'}, // importante para API REST
     );
 
@@ -108,9 +116,10 @@ class _LoginPageState extends State<LoginPage> {
       try {
         final data = jsonDecode(response.body);
         debugPrint('Usuário registrado com sucesso: $data');
-
       } catch (e) {
-        debugPrint('Usuário registrado com sucesso, mas erro ao decodificar JSON: $e');
+        debugPrint(
+          'Usuário registrado com sucesso, mas erro ao decodificar JSON: $e',
+        );
       }
     } else {
       makeError(response.body);
@@ -129,40 +138,42 @@ class _LoginPageState extends State<LoginPage> {
   void _submitLogin() async {
     final email = _emailController.text;
     final password = _passwordController.text;
-    
 
     _emailController.clear();
     _passwordController.clear();
     _confirmPasswordController.clear();
-    
+
     if (email.isEmpty || password.isEmpty) {
       debugPrint('Email e senha não podem estar vazios');
       makeError('Email e senha não podem estar vazios');
       return;
     }
-    
+
     final response = await http.post(
       Uri.parse('http://localhost:3000/login'),
-      body: jsonEncode({
-        'email': email,
-        'password': password,
-      }),
-      headers: {'Content-Type': 'application/json'}, // importante para API REST
+      body: jsonEncode({'email': email, 'password': password}),
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
-
       final data = jsonDecode(response.body);
       final name = data['name'];
 
       _hasError = false;
       _errorMessage = '';
       debugPrint('Login realizado com sucesso: ${response.body}');
-      Provider.of<UserProvider>(context, listen: false).setUser(User(email: email, name: name));
+      Provider.of<UserProvider>(
+        context,
+        listen: false,
+      ).setUser(User(email: email, name: name));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Login realizado com sucesso!')),
+      );
       Navigator.of(context).pushReplacementNamed('/home');
-
     } else {
-      makeError('Erro ao fazer login: ${response.statusCode}\n${response.body}');
+      makeError(
+        'Erro ao fazer login: ${response.statusCode}\n${response.body}',
+      );
       debugPrint('Erro na requisição: ${response.statusCode}');
       debugPrint('Corpo da resposta: ${response.body}');
     }
@@ -171,16 +182,13 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("Login"),
-      ),
+      appBar: AppBar(centerTitle: true, title: Text("Login")),
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: 400),
           child: Column(
             children: [
-              if(_hasError)
+              if (_hasError)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
@@ -195,8 +203,9 @@ class _LoginPageState extends State<LoginPage> {
                   confirmPasswordController: _confirmPasswordController,
                   nameController: _nameController,
                   onSubmit: _submitRegister,
+                  onBackToLogin: _changeToLogin,
                 )
-              else
+                else
                 LoginForm(
                   emailController: _emailController,
                   passwordController: _passwordController,
@@ -207,6 +216,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
+      
     );
   }
 }

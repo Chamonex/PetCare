@@ -32,7 +32,37 @@ app.post('/login', (req, res) => {
     }
 });
 
+// Endpoint para registrar novo pet de um usuário
+app.post('/registerPet', (req, res) => {
+    const { email, name, idade } = req.body;
+    if (!email || !name || !idade) {
+        return res.status(400).json({ success: false, message: "Email e informações do pet são obrigatórios." });
+    }
+    const user = users.find(u => u.email === email);
+    if (!user) {
+        return res.status(404).json({ success: false, message: "Usuário não encontrado." + email + "lista de usuários: " + JSON.stringify(users) });
+    }
+    if (!user.pets) {
+        user.pets = [];
+    }
+    user.pets.push({ name, idade });
+    res.json({ success: true, message: "Pet registrado com sucesso.", pets: user.pets });
+});
+
+// Endpoint para obter a lista de pets de um usuário
+app.get('/pets', (req, res) => {
+    const { email } = req.query;
+    if (!email) {
+        return res.status(400).json({ success: false, message: "Email é obrigatório." });
+    }
+    const user = users.find(u => u.email === email);
+    if (!user) {
+        return res.status(404).json({ success: false, message: "Usuário não encontrado." });
+    }
+    res.json({ success: true, pets: user.pets || [] });
+});
+
 app.listen(port, () => {
-    console.log(`Servnameor rodando na porta ${port}`);
+    console.log(`Servidor rodando no link http://localhost:${port}/`);
 });
 
