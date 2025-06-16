@@ -31,24 +31,27 @@ class RegisterForm extends StatelessWidget {
             label: 'email',
             hint: 'Enter your username',
           ),
+          const SizedBox(height: 24),
           AppTextField(
             controller: passwordController,
             label: 'password',
             hint: 'Enter your password',
             obscureText: true,
           ),
+          const SizedBox(height: 24),
           AppTextField(
             controller: confirmPasswordController,
             label: 'confirm password',
             hint: 'confirm your password',
             obscureText: true,
           ),
+          const SizedBox(height: 24),
           AppTextField(
             controller: nameController,
             label: 'name',
             hint: 'Enter your name',
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 48),
           AppButton(label: 'Register', onPressed: onSubmit),
           const SizedBox(height: 48),
           AppButton(
