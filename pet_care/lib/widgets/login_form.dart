@@ -22,6 +22,7 @@ class LoginForm extends StatelessWidget {
     return Form(
       child: Column(
         children: [
+          const SizedBox(height: 48),
           AppTextField(
             controller: emailController,
             label: 'email',
