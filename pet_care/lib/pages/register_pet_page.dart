@@ -58,7 +58,7 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:3000/registerPet'),
+        Uri.parse('http://192.168.15.101:3000/registerPet'),
         body: jsonEncode({'email': email, 'name': name, 'idade': idade, 'type': type}),
         headers: {'Content-Type': 'application/json'},
       );
@@ -87,10 +87,14 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
 
   @override
   Widget build(BuildContext context) {
+    
     final UserProvider userProvider = Provider.of<UserProvider>(context);
+    final Size screenSize = MediaQuery.of(context).size;
+    
+    final maxWidth = screenSize.width > 600 ? 600.0 : screenSize.width * 0.9;
 
     return Scaffold(
-      appBar: AppBar(title: Text('Registrar Pet')),
+      appBar: AppBar(title: Text('Bem vindo, ${userProvider.user?.name}')),
       body: Center(
         child: Column(
           children: [
@@ -102,7 +106,7 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
             ),
             const SizedBox(height: 48),
             ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 600),
+              constraints: BoxConstraints(maxWidth: maxWidth),
               child: Form(
                 key: _formKey,
                 child: Column(

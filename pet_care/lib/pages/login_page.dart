@@ -108,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
     final response = await http.post(
-      Uri.parse('http://localhost:3000/register'),
+      Uri.parse('http://192.168.15.101:3000/register'),
       body: jsonEncode({'email': email, 'password': password, 'name': name}),
       headers: {'Content-Type': 'application/json'}, // importante para API REST
     );
@@ -154,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     final response = await http.post(
-      Uri.parse('http://localhost:3000/login'),
+      Uri.parse('http://192.168.15.101:3000/login'),
       body: jsonEncode({'email': email, 'password': password}),
       headers: {'Content-Type': 'application/json'},
     );
@@ -162,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final name = data['name'];
-      havePets = data['havePets'] ?? false;
+      havePets = data['havePet'];
       _hasError = false;
       _errorMessage = '';
       debugPrint('Login realizado com sucesso: ${response.body}');
@@ -197,11 +197,15 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    
+    final maxWidth = screenSize.width > 600 ? 600.0 : screenSize.width * 0.9;
+
     return Scaffold(
       appBar: AppBar(centerTitle: true, title: Text("Login")),
       body: Center(
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 400),
+          constraints: BoxConstraints(maxWidth: maxWidth),
           child: Column(
             children: [
               if (_hasError)
