@@ -25,7 +25,12 @@ app.post('/login', (req, res) => {
     const { email, password } = req.body;
     const user = users.find(u => u.email === email && u.password === password);
     if (user) {
-        const havePet = !!user.pet;
+        var havePet;
+        if (user.pet)
+            havePet = true;
+        else
+            havePet = false;
+
         res.json({ success: true, message: "Login realizado com sucesso.", email: user.email, name: user.name, havePet: havePet });
     } else {
         // Falha na autenticação
