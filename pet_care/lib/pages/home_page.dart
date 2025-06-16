@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import '../providers/user_provider.dart';
@@ -20,6 +23,19 @@ class _HomePageState extends State<HomePage> {
     debugPrint('HomePage initialized');
   }
 
+  Future<void> _getPets() async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final email = userProvider.user?.email ?? '';
+    final uri = Uri.parse('http://localhost:3000/pet').replace(queryParameters: {'email': email});
+    final response = await http.get(
+      uri,
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    final data = jsonDecode(response.body);
+    debugPrint('GET Pets response status: ${data['pet']['name']}');
+  }
+  
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
@@ -43,28 +59,11 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Center(child: Column(
         children: [
+          Text(""),
           AppButton(
-            label: 'Home',
-            icon: Icons.home,
-            onPressed: () => changePage(context, 'register_pet'),
-            filled: false,
-            color: Colors.green,
-            width: 120,
-            height: 48,
-          ),
-          AppButton(
-            label: 'Home',
-            icon: Icons.home,
-            onPressed: () => changePage(context, 'register_pet'),
-            filled: false,
-            color: Colors.green,
-            width: 120,
-            height: 48,
-          ),
-          AppButton(
-            label: 'Home',
-            icon: Icons.home,
-            onPressed: () => changePage(context, 'register_pet'),
+            label: 'Meu Pet',
+            icon: Icons.pets,
+            onPressed: () => _getPets(),
             filled: false,
             color: Colors.green,
             width: 120,

@@ -8,6 +8,8 @@ class AppButton extends StatelessWidget {
   final Color? color;
   final double? width;
   final double? height;
+  final bool isCircle;
+  final String? imageAsset;
 
   const AppButton({
     super.key,
@@ -18,28 +20,47 @@ class AppButton extends StatelessWidget {
     this.color,
     this.width,
     this.height,
+    this.isCircle = true,
+    this.imageAsset,
   });
 
   @override
   Widget build(BuildContext context) {
-    final buttonChild = icon == null
-        ? Text(label)
-        : Row(
+    final buttonChild = imageAsset != null
+        ? Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 20),
-              const SizedBox(width: 8),
-              Text(label),
+              Image.asset(imageAsset!, width: 32, height: 32),
+              if (label.isNotEmpty) ...[
+                const SizedBox(width: 8),
+                Text(label),
+              ],
             ],
-          );
+          )
+        : icon == null
+            ? Text(label)
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, size: 20),
+                  const SizedBox(width: 8),
+                  Text(label),
+                ],
+              );
     final ButtonStyle style = filled
         ? ElevatedButton.styleFrom(
             backgroundColor: color,
             minimumSize: width != null && height != null ? Size(width!, height!) : null,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(isCircle ? 30 : 10),
+            ),
           )
         : OutlinedButton.styleFrom(
             foregroundColor: color,
             minimumSize: width != null && height != null ? Size(width!, height!) : null,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(isCircle ? 30 : 10),
+            ),
           );
     return filled
         ? ElevatedButton(

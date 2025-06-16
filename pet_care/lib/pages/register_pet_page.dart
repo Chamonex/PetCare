@@ -8,7 +8,6 @@ import '../utils/app_utils.dart';
 
 import '../providers/user_provider.dart';
 
-
 class RegisterPetPage extends StatefulWidget {
   const RegisterPetPage({super.key});
 
@@ -17,29 +16,31 @@ class RegisterPetPage extends StatefulWidget {
 }
 
 class _RegisterPetPageState extends State<RegisterPetPage> {
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController idadeController = TextEditingController();
   final TextEditingController timeController = TextEditingController();
 
-  Future<void> _selectTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        timeController.text = picked.format(context);
-      });
-    }
-  }
+  String? petType; // 'dog' ou 'cat'
+
+  // Future<void> _selectTime(BuildContext context) async {
+  //   final TimeOfDay? picked = await showTimePicker(
+  //     context: context,
+  //     initialTime: TimeOfDay.now(),
+  //   );
+  //   if (picked != null) {
+  //     setState(() {
+  //       timeController.text = picked.format(context);
+  //     });
+  //   }
+  // }
 
   Future<void> _registerPet(UserProvider userProvider) async {
     final String name = nameController.text;
     final String idade = idadeController.text;
     final String email = userProvider.user?.email ?? 'sem email';
+    final String? type = petType;
 
     if (userProvider.user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -47,10 +48,10 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
       );
       return;
     }
-    
-    if (name.isEmpty || idade.isEmpty) {
+
+    if (name.isEmpty || idade.isEmpty || type == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, preencha todos os campos')),
+        const SnackBar(content: Text('Por favor, preencha todos os campos e selecione o tipo do pet')),
       );
       return;
     }
@@ -58,7 +59,7 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
     try {
       final response = await http.post(
         Uri.parse('http://localhost:3000/registerPet'),
-        body: jsonEncode({'email': email, 'name': name, 'idade': idade}),
+        body: jsonEncode({'email': email, 'name': name, 'idade': idade, 'type': type}),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -67,6 +68,7 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
         debugPrint('SUCESSO: ${response.body}');
         final data = jsonDecode(response.body);
         message = data['message'] ?? 'Pet registrado com sucesso!';
+        changePage(context, 'home');
       } else {
         debugPrint('ERRO: ${response.body}');
         message = 'Erro ao registrar pet: ${response.body}';
@@ -85,7 +87,7 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
 
   @override
   Widget build(BuildContext context) {
-  final UserProvider userProvider = Provider.of<UserProvider>(context);
+    final UserProvider userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
       appBar: AppBar(title: Text('Registrar Pet')),
@@ -95,6 +97,8 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
             const Text(
               "Registre seu pet",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+              
             ),
             const SizedBox(height: 48),
             ConstrainedBox(
@@ -103,6 +107,39 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
                 key: _formKey,
                 child: Column(
                   children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          AppButton(
+                            label: '',
+                            onPressed: () {
+                              setState(() {
+                                petType = 'dog';
+                              });
+                            },
+                            imageAsset: 'assets/icons/dog.png',
+                            filled: petType == 'dog',
+                            color: Colors.green,
+                            width: 120,
+                            height: 120,
+                            isCircle: false,
+                          ),
+                          AppButton(
+                            label: '',
+                            onPressed: () {
+                              setState(() {
+                                petType = 'cat';
+                              });
+                            },
+                            imageAsset: 'assets/icons/cat.png',
+                            filled: petType == 'cat',
+                            color: Colors.green,
+                            width: 120,
+                            height: 120,
+                            isCircle: false,
+                          ),
+                        ]),
+                    const SizedBox(height: 24),
                     TextFormField(
                       controller: nameController,
                       decoration: const InputDecoration(

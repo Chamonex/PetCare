@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pet_care/utils/app_utils.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
 
@@ -116,6 +117,9 @@ class _LoginPageState extends State<LoginPage> {
       try {
         final data = jsonDecode(response.body);
         debugPrint('Usuário registrado com sucesso: $data');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Usuário criado com sucesso!')),
+        );
       } catch (e) {
         debugPrint(
           'Usuário registrado com sucesso, mas erro ao decodificar JSON: $e',
@@ -138,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
   void _submitLogin() async {
     final email = _emailController.text;
     final password = _passwordController.text;
-
+    bool havePets = false;
     _emailController.clear();
     _passwordController.clear();
     _confirmPasswordController.clear();
@@ -158,19 +162,31 @@ class _LoginPageState extends State<LoginPage> {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final name = data['name'];
-
+      havePets = data['havePets'] ?? false;
       _hasError = false;
       _errorMessage = '';
       debugPrint('Login realizado com sucesso: ${response.body}');
+      
+      if (havePets) {
+        debugPrint('este usuário já tem pets registrados');
+        changePage(context, 'home');
+        
+      } else {
+        debugPrint('este usuário não tem pets registrados');
+        changePage(context, 'registerPet');
+      }
+
       Provider.of<UserProvider>(
         context,
         listen: false,
       ).setUser(User(email: email, name: name));
+      
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Login realizado com sucesso!')),
       );
-      Navigator.of(context).pushReplacementNamed('/home');
-    } else {
+    } 
+    
+    else {
       makeError(
         'Erro ao fazer login: ${response.statusCode}\n${response.body}',
       );
