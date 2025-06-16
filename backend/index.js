@@ -16,7 +16,7 @@ app.post('/register', (req, res) => {
     if (users.find(u => u.email === email)) {
         return res.status(409).json({ success: false, message: "Email já cadastrado." });
     }
-    users.push({ email, password , name});
+    users.push({ email, password , name, pet: null }); // Adiciona campo pet: null
     res.json({ success: true, message: "Usuário registrado com sucesso. name :" + name});
 });
 
@@ -25,7 +25,8 @@ app.post('/login', (req, res) => {
     const { email, password } = req.body;
     const user = users.find(u => u.email === email && u.password === password);
     if (user) {
-        res.json({ success: true, message: "Login realizado com sucesso.", email: user.email, name: user.name });
+        const havePet = !!user.pet;
+        res.json({ success: true, message: "Login realizado com sucesso.", email: user.email, name: user.name, havePet: havePet });
     } else {
         // Falha na autenticação
         res.status(401).json({ success: false, message: "Email ou senha inválnameos." });
@@ -34,23 +35,22 @@ app.post('/login', (req, res) => {
 
 // Endpoint para registrar novo pet de um usuário
 app.post('/registerPet', (req, res) => {
-    const { email, name, idade } = req.body;
-    if (!email || !name || !idade) {
+    const { email, name, idade , type} = req.body;
+    if (!email || !name || !idade || !type) {
         return res.status(400).json({ success: false, message: "Email e informações do pet são obrigatórios." });
     }
     const user = users.find(u => u.email === email);
     if (!user) {
         return res.status(404).json({ success: false, message: "Usuário não encontrado." + email + "lista de usuários: " + JSON.stringify(users) });
     }
-    if (!user.pets) {
-        user.pets = [];
+    if (user.pet) {
+        return res.status(409).json({ success: false, message: "Usuário já possui um pet registrado." });
     }
-    user.pets.push({ name, idade });
-    res.json({ success: true, message: "Pet registrado com sucesso.", pets: user.pets });
+    user.pet = { name, idade , type};
+    res.json({ success: true, message: "Pet registrado com sucesso.", pet: user.pet });
 });
-
-// Endpoint para obter a lista de pets de um usuário
-app.get('/pets', (req, res) => {
+// Endpoint para obter o pet de um usuário
+app.get('/pet', (req, res) => {
     const { email } = req.query;
     if (!email) {
         return res.status(400).json({ success: false, message: "Email é obrigatório." });
@@ -59,7 +59,7 @@ app.get('/pets', (req, res) => {
     if (!user) {
         return res.status(404).json({ success: false, message: "Usuário não encontrado." });
     }
-    res.json({ success: true, pets: user.pets || [] });
+    res.json({ success: true, pet: user.pet });
 });
 
 app.listen(port, () => {
