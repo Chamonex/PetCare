@@ -8,7 +8,7 @@ import '../providers/user_provider.dart';
 import '../widgets/app_button.dart';
 import '../utils/app_utils.dart';
 import '../models/pet.dart' as pet_model;
-import '../widgets/pet_info_box.dart';
+import '../pages/edit_pet_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -89,6 +89,75 @@ class _HomePageState extends State<HomePage> {
               
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class PetInfoBox extends StatelessWidget {
+  final pet_model.Pet pet;
+  const PetInfoBox({super.key, required this.pet});
+
+  // PET ATRIBUTES
+  // String name;
+  // String idade;
+  // String type;
+  // List<Tarefa>? tarefas;
+  
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.all(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        pet.name,
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 24),
+                Image.asset(
+                  pet.type.toLowerCase() == 'dog'
+                      ? 'assets/icons/dog.png'
+                      : 'assets/icons/cat.png',
+                  width: 64,
+                  height: 64,
+                ),
+              ],
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: AppButton(
+                label: 'Editar Pet',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditPetPage(pet: pet),
+                    ),
+                  );
+                },
+                filled: true,
+              ),
+            ),
+          ],
         ),
       ),
     );
