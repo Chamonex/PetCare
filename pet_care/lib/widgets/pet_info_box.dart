@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import '../models/pet.dart';
+import '../pages/edit_pet_page.dart'; // Certifique-se de que o caminho esteja correto
 
 class PetInfoBox extends StatelessWidget {
   final Pet pet;
   const PetInfoBox({super.key, required this.pet});
 
+  // PET ATRIBUTES
+  // String name;
+  // String idade;
+  // String type;
+  // List<Tarefa>? tarefas;
+  
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -44,7 +51,14 @@ class PetInfoBox extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditPetPage(pet: pet),
+                    ),
+                  );
+                },
                 child: const Text('Editar Pet'),
               ),
             ),

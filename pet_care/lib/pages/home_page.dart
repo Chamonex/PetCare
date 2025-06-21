@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
     debugPrint('HomePage initialized');
   }
 
-  Future<pet_model.Pet?> _getPets(BuildContext context) async {
+  Future<pet_model.Pet?> _getPet(BuildContext context) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     final email = userProvider.user?.email ?? '';
     final uri = Uri.parse(
@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: [
               FutureBuilder<pet_model.Pet?>(
-                future: _getPets(context),
+                future: _getPet(context),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
