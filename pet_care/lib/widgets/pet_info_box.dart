@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/pet.dart';
 import '../pages/edit_pet_page.dart'; // Certifique-se de que o caminho esteja correto
+import '../widgets/app_button.dart';
 
 class PetInfoBox extends StatelessWidget {
   final Pet pet;
@@ -49,8 +50,9 @@ class PetInfoBox extends StatelessWidget {
               ],
             ),
             Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
+              alignment: Alignment.center,
+              child: AppButton(
+                label: 'Editar Pet',
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -59,7 +61,7 @@ class PetInfoBox extends StatelessWidget {
                     ),
                   );
                 },
-                child: const Text('Editar Pet'),
+                filled: true,
               ),
             ),
           ],
